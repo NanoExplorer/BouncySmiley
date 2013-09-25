@@ -33,7 +33,7 @@ public abstract class AndroidJApplet extends Activity {
 	
 	private static final int UPDATE = 1;
 	private Handler mHandler;
-	private static final double FRAMES_PER_SECOND = 30;
+	private static final double FRAMES_PER_SECOND = 30; //changing this value is encouraged!
 
 	
     @Override

@@ -48,7 +48,7 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 	    //import sensors
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+		mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME/*I didn't know which of these to pick, but "GAME" sounded the most promising*/); 
 	}
 	
 	
