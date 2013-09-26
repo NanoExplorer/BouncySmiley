@@ -39,7 +39,7 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 	public int counter=0;
 	double velocityX =0, velocityY = 0, posX = 100, posY = 100, accelerationX = 0, accelerationY = 0;
 
-	
+	//TESTING 123
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
