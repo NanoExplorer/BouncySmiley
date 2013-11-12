@@ -38,7 +38,10 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 	//The value of counter has been initialized to help keep track of current frame
 	public int counter=0;
 	double velocityX =0, velocityY = 0, posX = 100, posY = 100, accelerationX = 0, accelerationY = 0;
-
+	
+	private boolean mInitialized = false;
+	private final double smileyRatio = 0.000833333d;
+	private double smileyScale=1;
 	//TESTING 123
 	
 	@Override
@@ -49,6 +52,7 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME/*I didn't know which of these to pick, but "GAME" sounded the most promising*/); 
+		mInitialized = false;
 	}
 	
 	
@@ -56,7 +60,12 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 
 	public void paint(Graphics canvas) {
 		// TODO write your code here
-    
+		if(!mInitialized) {
+			smileyScale = ((double)canvas.getWidth())*smileyRatio;
+			mInitialized = true;
+		}
+		smileyScale = smileyRatio * canvas.getWidth();
+		
 		
 		velocityX += accelerationX; //acceleration is a change in velocity :)
 		velocityY += accelerationY;
@@ -65,15 +74,16 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 		posY += velocityY;
 		
 		
+		
 		/*********COLLISION DETECTION (Only checks screen borders (There isn't really anything else TO check...))******/
-		if(posX + 200 >= canvas.getWidth()){
+		if(posX + 200*smileyScale >= canvas.getWidth()){
 			velocityX = -velocityX + 1;
-			posX = canvas.getWidth() - 200;
+			posX = canvas.getWidth() - 200*smileyScale;
 			
 		}
-		if(posY + 200 >= canvas.getHeight()) {
+		if(posY + 200*smileyScale >= canvas.getHeight()) {
 			velocityY = -velocityY + 1;
-			posY = canvas.getHeight() - 200;
+			posY = canvas.getHeight() - 200*smileyScale;
 		}
 		if(posX <= 0) {
 			posX = 0;
@@ -88,8 +98,8 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 		canvas.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
 		//redraw smiley
-		happyFace(canvas, (int)posX, (int)posY);
-
+		happyFace(canvas, (int)posX, (int)posY, smileyScale);
+		//canvas.drawString(((Double)(smileyScale)).toString(), 40, 40);
 	}
 	
 	
@@ -110,20 +120,27 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 		canvas.drawArc(x+50, y+130, 100, 50, 180, -180);
 	}
 
-	public void happyFace(Graphics canvas, int x, int y) {
+	/**
+	 * Draws a frowny face on a graphics object (from AndroidJApplet) at the specified x and y values, with the specified scale
+	 * @param canvas the Graphics object from AndroidJApplet
+	 * @param x x-coord of top left of the bounding box of the smiley
+	 * @param y y-coord of top left of the bounding box of the smiley
+	 * @param scale multiple of originial size (for example 2 would set this to be twice its normal size
+	 */
+	public void happyFace(Graphics canvas, int x, int y, double scale) {
 		
 		canvas.setColor(Color.YELLOW);
 		//yellow circle
-		canvas.fillOval(x, y, 200, 200);
+		canvas.fillOval(x, y, (int)(200*scale), (int)(200*scale));
 
 		canvas.setColor(Color.BLACK);
 		//outline
-		canvas.drawOval(x, y, 200, 200);
+		canvas.drawOval(x, y, (int)(200*scale), (int)(200*scale));
 		//Eyes
-		canvas.fillOval(x+55, y+50, 10, 20);
-		canvas.fillOval(x+130, y+50, 10, 20);
+		canvas.fillOval((int)(x+(55*scale)), (int)(y+(50*scale)), (int)(10*scale), (int)(20*scale));
+		canvas.fillOval((int)(x+(130*scale)),(int)(y+(50*scale)), (int)(10*scale), (int)(20*scale));
         //Smile
-		canvas.drawArc(x+50, y+110, 100, 50, 180, 180);
+		canvas.drawArc((int)(x+(50*scale)), (int)(y+(110*scale)), (int)(100*scale), (int)(50*scale), 180, 180);
 		
 
 	}
@@ -149,7 +166,7 @@ public class Lab4 extends AndroidJApplet implements SensorEventListener {
 		//Takes accelerometer data from event.values
 		float x = event.values[1];
 		float y = event.values[0];
-		accelerationX = x;
-		accelerationY = y;
+		accelerationX = -y;
+		accelerationY = x;
 	}
 }
